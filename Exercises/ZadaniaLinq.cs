@@ -35,8 +35,12 @@ public sealed class ZadaniaLinq
     /// </summary>
     public IEnumerable<string> Zadanie02_AdresyEmailStudentow()
     {
+        var query = DaneUczelni.Studenci
+            .Select(s => s.Email)
+            .ToList();
 
-        throw Niezaimplementowano(nameof(Zadanie02_AdresyEmailStudentow));
+        return query;
+        //throw Niezaimplementowano(nameof(Zadanie02_AdresyEmailStudentow));
     }
 
     /// <summary>
@@ -51,7 +55,14 @@ public sealed class ZadaniaLinq
     /// </summary>
     public IEnumerable<string> Zadanie03_StudenciPosortowani()
     {
-        throw Niezaimplementowano(nameof(Zadanie03_StudenciPosortowani));
+        var query = DaneUczelni.Studenci
+            .OrderBy(s => s.Nazwisko)
+            .ThenBy(s => s.Imie)
+            .Select(s => $"{s.NumerIndeksu}, {s.Imie}, {s.Nazwisko}" )
+            .ToList();
+
+        return query;
+        //throw Niezaimplementowano(nameof(Zadanie03_StudenciPosortowani));
     }
 
     /// <summary>
@@ -66,7 +77,13 @@ public sealed class ZadaniaLinq
     /// </summary>
     public IEnumerable<string> Zadanie04_PierwszyPrzedmiotAnalityczny()
     {
-        throw Niezaimplementowano(nameof(Zadanie04_PierwszyPrzedmiotAnalityczny));
+        var query = DaneUczelni.Przedmioty
+            .Where(p => p.Kategoria.Equals("Analytics"))
+            .Select(p => $"{p.Nazwa}, {p.DataStartu}")
+            .FirstOrDefault();
+
+        return new[] { query ?? "No such existing item" }; 
+        //throw Niezaimplementowano(nameof(Zadanie04_PierwszyPrzedmiotAnalityczny));
     }
 
     /// <summary>
@@ -83,6 +100,12 @@ public sealed class ZadaniaLinq
     /// </summary>
     public IEnumerable<string> Zadanie05_CzyIstniejeNieaktywneZapisanie()
     {
+        var query = DaneUczelni.Zapisy
+            .Contains(
+                DaneUczelni.Zapisy.Where(z => z.CzyAktywny == true).Single()
+            )
+            .ToString();
+
         throw Niezaimplementowano(nameof(Zadanie05_CzyIstniejeNieaktywneZapisanie));
     }
 
