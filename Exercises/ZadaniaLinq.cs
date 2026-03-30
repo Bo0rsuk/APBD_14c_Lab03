@@ -100,12 +100,9 @@ public sealed class ZadaniaLinq
     /// </summary>
     public IEnumerable<string> Zadanie05_CzyIstniejeNieaktywneZapisanie()
     {
-        var query = DaneUczelni.Zapisy
-            .Contains(
-                DaneUczelni.Zapisy.Where(z => z.CzyAktywny == true).Single()
-            )
-            .ToString();
+        var query = DaneUczelni.Zapisy.Any(z => z.CzyAktywny) ? "Tak" : "Nie";
 
+        return new [] { query };
         throw Niezaimplementowano(nameof(Zadanie05_CzyIstniejeNieaktywneZapisanie));
     }
 
@@ -121,6 +118,11 @@ public sealed class ZadaniaLinq
     /// </summary>
     public IEnumerable<string> Zadanie06_CzyWszyscyProwadzacyMajaKatedre()
     {
+        var query = DaneUczelni.Prowadzacy.Count(p => p.Katedra != null) == DaneUczelni.Prowadzacy.Count() ? "Tak" : "Nie";
+        var query1 = DaneUczelni.Prowadzacy.All(p => p.Katedra != null) ? "Tak" : "Nie";
+
+
+        return new [] { query };
         throw Niezaimplementowano(nameof(Zadanie06_CzyWszyscyProwadzacyMajaKatedre));
     }
 
