@@ -137,6 +137,10 @@ public sealed class ZadaniaLinq
     /// </summary>
     public IEnumerable<string> Zadanie07_LiczbaAktywnychZapisow()
     {
+        var query = DaneUczelni.Zapisy.Where(z => z.CzyAktywny == true).Count();
+        var query1 = DaneUczelni.Zapisy.Count(z => z.CzyAktywny);
+
+        return new[] { query.ToString() };
         throw Niezaimplementowano(nameof(Zadanie07_LiczbaAktywnychZapisow));
     }
 
@@ -151,6 +155,13 @@ public sealed class ZadaniaLinq
     /// </summary>
     public IEnumerable<string> Zadanie08_UnikalneMiastaStudentow()
     {
+        var query = DaneUczelni.Studenci
+            .OrderBy(s => s.Miasto)
+            .Select(s => $"{s.Miasto}")
+            .Distinct()
+            .ToList();
+
+        return new[] { query.ToString() };
         throw Niezaimplementowano(nameof(Zadanie08_UnikalneMiastaStudentow));
     }
 
@@ -166,6 +177,14 @@ public sealed class ZadaniaLinq
     /// </summary>
     public IEnumerable<string> Zadanie09_TrzyNajnowszeZapisy()
     {
+        var query = DaneUczelni.Zapisy
+            .OrderByDescending(z => z.DataZapisu)
+            .Take(3)
+            .Select(z => $"{z.DataZapisu}, {z.StudentId}, {z.PrzedmiotId}")
+            .ToList();
+
+        return query;
+
         throw Niezaimplementowano(nameof(Zadanie09_TrzyNajnowszeZapisy));
     }
 
@@ -182,6 +201,14 @@ public sealed class ZadaniaLinq
     /// </summary>
     public IEnumerable<string> Zadanie10_DrugaStronaPrzedmiotow()
     {
+        var query = DaneUczelni.Przedmioty
+            .OrderBy(p => p.Nazwa)
+            .Skip(2)
+            .Take(2)
+            .Select(p => $"{p.Nazwa}, {p.Kategoria}")
+            .ToList();
+
+        return query;
         throw Niezaimplementowano(nameof(Zadanie10_DrugaStronaPrzedmiotow));
     }
 
