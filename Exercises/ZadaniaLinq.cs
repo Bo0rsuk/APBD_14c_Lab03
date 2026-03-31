@@ -161,7 +161,7 @@ public sealed class ZadaniaLinq
             .Distinct()
             .ToList();
 
-        return new[] { query.ToString() };
+        return query;
         throw Niezaimplementowano(nameof(Zadanie08_UnikalneMiastaStudentow));
     }
 
@@ -224,6 +224,17 @@ public sealed class ZadaniaLinq
     /// </summary>
     public IEnumerable<string> Zadanie11_PolaczStudentowIZapisy()
     {
+        var query = DaneUczelni.Studenci
+            .Join(
+                DaneUczelni.Zapisy,
+                s => s.Id,
+                z => z.StudentId,
+                (s, z) => new {s.Imie, s.Nazwisko, z.DataZapisu} 
+            )
+            .Select(j => $"{j.Imie}, {j.Nazwisko}, {j.DataZapisu}")
+            .ToList();
+
+        return query;
         throw Niezaimplementowano(nameof(Zadanie11_PolaczStudentowIZapisy));
     }
 
@@ -240,6 +251,27 @@ public sealed class ZadaniaLinq
     /// </summary>
     public IEnumerable<string> Zadanie12_ParyStudentPrzedmiot()
     {
+        var sqlSyntaxQuery = from z in DaneUczelni.Zapisy
+                             join s in DaneUczelni.Studenci on z.StudentId equals s.Id
+                             join p in DaneUczelni.Przedmioty on z.PrzedmiotId equals p.Id
+                             select $"{ s.Imie}, {s.Nazwisko}, {p.Nazwa}";
+
+        var query = DaneUczelni.Zapisy
+            .Join(
+                DaneUczelni.Studenci,
+                z => z.StudentId,
+                s => s.Id,
+                (z, s) => new { z, s }
+            ).Join(
+                DaneUczelni.Przedmioty,
+                zs => zs.z.PrzedmiotId,
+                p => p.Id,
+                (zs, p) => new { zs, p }
+            )
+            .Select((zs, p) =>  $"{ zs.zs.s.Imie}, {zs.zs.s.Nazwisko}, {zs.p.Nazwa}")
+            .ToList();
+
+        return query;
         throw Niezaimplementowano(nameof(Zadanie12_ParyStudentPrzedmiot));
     }
 
@@ -255,6 +287,22 @@ public sealed class ZadaniaLinq
     /// </summary>
     public IEnumerable<string> Zadanie13_GrupowanieZapisowWedlugPrzedmiotu()
     {
+        var query = DaneUczelni.Zapisy
+            .Join(
+                DaneUczelni.Przedmioty,
+                z => z.PrzedmiotId,
+                p => p.Id,
+                (z, p) => new { p.Nazwa }
+            )
+            .GroupBy(x => x.Nazwa)
+            .Select(g => $"{g.Key}, {g.Count()}");
+            //.Select(g => new
+            //{
+            //    Nazwa = g.Key,
+            //    Count = g.Count(),
+            //});
+
+        return query;
         throw Niezaimplementowano(nameof(Zadanie13_GrupowanieZapisowWedlugPrzedmiotu));
     }
 
