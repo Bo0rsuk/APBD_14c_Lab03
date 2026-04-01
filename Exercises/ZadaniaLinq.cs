@@ -440,6 +440,20 @@ public sealed class ZadaniaLinq
     /// </summary>
     public IEnumerable<string> Wyzwanie02_PrzedmiotyStartujaceWKwietniuBezOcenKoncowych()
     {
+        var query = DaneUczelni.Przedmioty
+            .Join(
+                DaneUczelni.Zapisy,
+                p => p.Id,
+                z => z.PrzedmiotId,
+                (p, z) => new { p.Nazwa, p.DataStartu, z.OcenaKoncowa })
+            .Where(x => x.DataStartu.Month == 4 && x.DataStartu.Year == 2026)
+            .GroupBy(g => new { g.Nazwa })
+            //.Where(g => (g.Sum(x => x.OcenaKoncowa) != null ? 1 : 0) == 0)
+            //.Where(g => g.Count(x => x.OcenaKoncowa != null) == 0)
+            .Where(g => !g.Any(x => x.OcenaKoncowa != null))
+            .Select(g => $"{g.Key.Nazwa}");
+
+        return query;
         throw Niezaimplementowano(nameof(Wyzwanie02_PrzedmiotyStartujaceWKwietniuBezOcenKoncowych));
     }
 
@@ -458,6 +472,25 @@ public sealed class ZadaniaLinq
     /// </summary>
     public IEnumerable<string> Wyzwanie03_ProwadzacyISredniaOcenNaIchPrzedmiotach()
     {
+        var query = DaneUczelni.Prowadzacy
+            .GroupJoin(
+                DaneUczelni.Przedmioty,
+                pr => pr.Id,
+                p => p.ProwadzacyId,
+                (pr, ps) => new { pr, ps })
+            .SelectMany(
+                x => x.ps.DefaultIfEmpty(),
+                (x, p) => new { x.pr, p })
+            .Join(
+                DaneUczelni.Zapisy,
+                x => x.p.Id,
+                z => z.PrzedmiotId,
+                (x, z) => new { x.pr, z })
+            .Where(x => x.z.OcenaKoncowa != null)
+            .GroupBy(x => new { x.pr.Imie, x.pr.Nazwisko })
+            .Select(g => $"{g.Key.Imie}, {g.Key.Nazwisko}, {g.Average(x => x.z.OcenaKoncowa)}");
+
+        return query;
         throw Niezaimplementowano(nameof(Wyzwanie03_ProwadzacyISredniaOcenNaIchPrzedmiotach));
     }
 
@@ -476,6 +509,18 @@ public sealed class ZadaniaLinq
     /// </summary>
     public IEnumerable<string> Wyzwanie04_MiastaILiczbaAktywnychZapisow()
     {
+        var query = DaneUczelni.Studenci
+            .Join(
+                DaneUczelni.Zapisy,
+                s => s.Id,
+                z => z.StudentId,
+                (s, z) => new { s.Miasto, z.CzyAktywny })
+            .Where(x => x.CzyAktywny == true)
+            .GroupBy(x => new { x.Miasto })
+            .OrderByDescending(g => g.Count())
+            .Select(g => $"{g.Key.Miasto}, {g.Count()}");
+
+        return query;
         throw Niezaimplementowano(nameof(Wyzwanie04_MiastaILiczbaAktywnychZapisow));
     }
 
